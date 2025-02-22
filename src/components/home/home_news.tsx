@@ -4,13 +4,17 @@ import Slider, { Settings } from 'react-slick';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button'; // Import Button component
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme, styled } from '@mui/material/styles';
 import IconArrowBack from '@mui/icons-material/ArrowBack';
 import IconArrowForward from '@mui/icons-material/ArrowForward';
-import { MentorCardItem } from '@/components/mentor';
-import { data } from './mentors.data';
+import { format } from 'date-fns';
+import Image from 'next/image';
+import { dataNews } from './home_news.data';
+import Link from 'next/link';
+import { useRouter } from 'next/router'; // Import useRouter
 
 interface SliderArrowArrow {
     onClick?: () => void;
@@ -45,11 +49,11 @@ const SliderArrow: FC<SliderArrowArrow> = (props) => {
 const StyledDots = styled('ul')(({ theme }) => ({
     '&.slick-dots': {
         position: 'absolute',
-        left: '50%', // Center the dots
+        left: '50%',
         bottom: -20,
-        transform: 'translateX(-50%)', // Adjust for centering
-        paddingLeft: 0, // Remove default padding
-        textAlign: 'center', // Center the dots
+        transform: 'translateX(-50%)',
+        paddingLeft: 0,
+        textAlign: 'center',
         '& li': {
             marginRight: theme.spacing(2),
             '&.slick-active>div': {
@@ -59,9 +63,26 @@ const StyledDots = styled('ul')(({ theme }) => ({
     },
 }));
 
-const HomeNewes: FC = () => {
+const StyledCard = styled(Card)(({ theme }) => ({
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    transition: 'transform 0.3s ease-in-out',
+    '&:hover': {
+        transform: 'translateY(-8px)',
+    },
+}));
+
+const HomeNews: FC = () => {
     const { breakpoints } = useTheme();
     const matchMobileView = useMediaQuery(breakpoints.down('md'));
+    const router = useRouter(); // Get the router object
+    const { locale } = router; // Extract the current locale
+
+    // Only render the component if the locale is Arabic
+    if (locale !== 'ar') {
+        return null; // Return null if the locale is not Arabic
+    }
 
     const sliderConfig: Settings = {
         infinite: true,
@@ -79,7 +100,7 @@ const HomeNewes: FC = () => {
 
     return (
         <Box
-            id="mentors"
+            id="news"
             sx={{
                 pt: {
                     xs: 6,
@@ -93,41 +114,60 @@ const HomeNewes: FC = () => {
             }}
         >
             <Container maxWidth="lg">
-                <Typography variant="h1" sx={{ fontSize: 40, mb: 4 }}>
-                    What Our Client Say About Us
+                <Typography variant="h1" sx={{ fontSize: '3rem !important', mb: 4 }}>
+                    Latest News & Events
                 </Typography>
 
-                {/* Slider */}
                 <Slider {...sliderConfig}>
-                    {data.map((item) => (
-                        <MentorCardItem key={String(item.id)} item={item} />
+                    {dataNews.map((item) => (
+                        <Box key={item.id} sx={{ p: 1 }}>
+                            <Link href={`/news/${item.slug}`} >
+                                <StyledCard>
+                                    <Box sx={{ position: 'relative', height: 200 }}>
+                                        <Image
+                                            src={item.image[0].url}
+                                            alt={item.title}
+                                            width={item.image[0].width}
+                                            height={item.image[0].height}
+                                            style={{
+                                                objectFit: 'cover',
+                                                width: '100%',
+                                                height: '100%'
+                                            }}
+                                        />
+                                    </Box>
+                                    <CardContent sx={{ flexGrow: 1 }}>
+                                        <Typography
+                                            gutterBottom
+                                            variant="h6"
+                                            component="h2"
+                                            sx={{
+                                                fontWeight: 'bold',
+                                                minHeight: 60,
+                                                fontSize: { xs: 16, md: 18 }
+                                            }}
+                                        >
+                                            {item.title}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            sx={{ mb: 2 }}
+                                        >
+                                            {format(new Date(item.date), 'dd MMMM yyyy')}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            {item.shortDescription}
+                                        </Typography>
+                                    </CardContent>
+                                </StyledCard>
+                            </Link>
+                        </Box>
                     ))}
                 </Slider>
-
-                {/* All News Button */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-start', // Align button to the left
-
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: 'primary.main',
-                            color: 'primary.contrastText',
-                            '&:hover': {
-                                backgroundColor: 'primary.dark',
-                            },
-                        }}
-                    >
-                        All News
-                    </Button>
-                </Box>
             </Container>
         </Box>
     );
 };
 
-export default HomeNewes;
+export default HomeNews;

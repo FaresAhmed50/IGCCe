@@ -11,24 +11,24 @@ interface Data {
 }
 
 export const data: Data[] = [
-  {
-    title: 'Easy Accessable',
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
-    icon: <ArtTrackIcon />,
-  },
-  {
-    title: 'More Affordable Cost',
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
-    icon: <AttachMoneyIcon />,
-  },
-  {
-    title: 'Flexible Study Time',
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
-    icon: <LocalLibraryIcon />,
-  },
-  {
-    title: 'Consultation With Mentor',
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
-    icon: <ContactSupportIcon />,
-  },
+  // {
+  //   title: 'Easy Accessable',
+  //   description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
+  //   icon: <ArtTrackIcon />,
+  // },
+  // {
+  //   title: 'More Affordable Cost',
+  //   description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
+  //   icon: <AttachMoneyIcon />,
+  // },
+  // {
+  //   title: 'Flexible Study Time',
+  //   description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
+  //   icon: <LocalLibraryIcon />,
+  // },
+  // {
+  //   title: 'Consultation With Mentor',
+  //   description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
+  //   icon: <ContactSupportIcon />,
+  // },
 ]

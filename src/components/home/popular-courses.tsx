@@ -8,10 +8,13 @@ import { useTheme, styled } from '@mui/material/styles';
 import { IconButton, useMediaQuery, Modal, TextField, Button } from '@mui/material';
 import IconArrowBack from '@mui/icons-material/ArrowBack';
 import IconArrowForward from '@mui/icons-material/ArrowForward';
-
-import { data } from './popular-course.data';
+import useCourseData from './popular-course.data'; // Import the custom hook
 import { CourseCardItem } from '@/components/course';
-import {Course} from "@/interfaces/course";
+import { Course } from '@/interfaces/course';
+import {useTranslation} from "next-i18next";
+import {useRouter} from "next/router";
+
+
 
 interface SliderArrowArrow {
     onClick?: () => void;
@@ -29,6 +32,8 @@ interface FormData {
 
 const SliderArrow: FC<SliderArrowArrow> = (props) => {
     const { onClick, type, className } = props;
+
+
     return (
         <IconButton
             sx={{
@@ -79,6 +84,12 @@ const HomePopularCourse: FC = () => {
         company: '',
         courseName: '',
     });
+    const { t } = useTranslation('common')
+    const { locale } = useRouter()
+    const isRtl = locale === 'ar'
+
+    // Use the custom hook to fetch data
+    const { data } = useCourseData();
 
     // Handle modal open
     const handleOpen = (course: Course) => {
@@ -169,10 +180,20 @@ const HomePopularCourse: FC = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: { xs: 'center', md: 'flex-start' },
+
                             }}
                         >
-                            <Typography variant="h1" sx={{ mt: { xs: 0, md: -5 }, fontSize: { xs: 30, md: 48 } }}>
-                                Most Popular Courses
+                            <Typography
+                                sx={{
+                                    color: 'text.secondary',
+                                    mb: 2,
+                                    lineHeight: 1.6,
+                                    ml: { xs: 0},
+                                    textAlign: isRtl ? 'right' : 'left',
+                                    direction: isRtl ? 'rtl' : 'ltr'
+                                }}
+                            >
+                                { t('programDes.program13') }
                             </Typography>
                         </Box>
                     </Grid>
@@ -280,4 +301,3 @@ const HomePopularCourse: FC = () => {
 };
 
 export default HomePopularCourse;
-

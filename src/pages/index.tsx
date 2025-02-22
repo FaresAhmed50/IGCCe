@@ -2,7 +2,9 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { MainLayout } from '@/components/layout'
-// import { HomeFeature, HomeHero, HomePopularCourse, HomeTestimonial, HomeOurMentors, DynamicHomeNewsLetter } from '@/components/home'
+import { defaultSEO } from '@/utils/seo.config'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { GetStaticProps } from 'next'
 
 const DynamicHomeHero = dynamic(() => import('../components/home/hero'))
 const DynamicHomeFeature = dynamic(() => import('../components/home/feature'))
@@ -12,6 +14,9 @@ const DynamicHomeOurMentors = dynamic(() => import('../components/home/mentors')
 const DynamicHomeNewsLetter = dynamic(() => import('../components/home/Contact-form'))
 const DynamicHomeNews = dynamic(() => import('../components/home/home_news'))
 const DynamicWhatsappIcon = dynamic(() => import('../components/home/whatsappFloatingIcon'))
+const DynamicPartnersCarousel = dynamic(() => import('../components/partners/partners-carousel'), {
+  ssr: false
+})
 
 const Home: NextPageWithLayout = () => {
   return (
@@ -21,14 +26,22 @@ const Home: NextPageWithLayout = () => {
       <DynamicHomeFeature />
       <DynamicHomeTestimonial />
       <DynamicHomeOurMentors />
+      <DynamicHomeNews />
+      <DynamicPartnersCarousel />
       <DynamicHomeNewsLetter />
-        <DynamicHomeNews />
-        <DynamicWhatsappIcon/>
-
+      <DynamicWhatsappIcon/>
     </>
   )
 }
 
-Home.getLayout = (page) => <MainLayout>{page}</MainLayout>
+Home.getLayout = (page) => <MainLayout seo={defaultSEO}>{page}</MainLayout>
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+    },
+  }
+}
 
 export default Home

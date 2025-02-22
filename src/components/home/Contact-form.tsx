@@ -7,10 +7,19 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
+import { TextareaAutosize } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { StyledButton } from '../styled-button';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 
 const HomeNewsLetter: FC = () => {
+    const { t } = useTranslation('common');
+    const { locale } = useRouter();
+    const isRtl = locale === 'ar';
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -18,6 +27,11 @@ const HomeNewsLetter: FC = () => {
         inquiryType: '',
         message: '',
     });
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent) => {
         const { name, value } = e.target;
@@ -27,10 +41,34 @@ const HomeNewsLetter: FC = () => {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form Data Submitted:', formData);
-        // Add your form submission logic here (e.g., API call)
+        
+        try {
+            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzslKJcRQYEKEKR8IN1pnjFQWvVI-3eAZ5dPhYtuUTzKbtW4n8SDjVqsk9qlfTice2N/exec';
+            
+            const url = new URL(GOOGLE_APPS_SCRIPT_URL);
+            Object.keys(formData).forEach(key => 
+                url.searchParams.append(key, formData[key as keyof typeof formData])
+            );
+
+            await fetch(url.toString(), {
+                method: 'GET',
+                mode: 'no-cors',
+            });
+
+            setOpenDialog(true);
+            setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                inquiryType: '',
+                message: '',
+            });
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('Sorry, there was an error submitting your message. Please try again later.');
+        }
     };
 
     return (
@@ -45,9 +83,9 @@ const HomeNewsLetter: FC = () => {
                     }}
                 >
                     <Typography variant="h1" component="h2" sx={{ mb: 1, fontSize: { xs: 32, md: 42 } }}>
-                        Contact Us
+                        {t('contactUs')}
                     </Typography>
-                    <Typography sx={{ mb: 6 }}>Get in touch with us for inquiries or support.</Typography>
+                    <Typography sx={{ mb: 6 }}>{t('getInTouch')}</Typography>
 
                     <Box
                         component="form"
@@ -64,51 +102,72 @@ const HomeNewsLetter: FC = () => {
                         {/* Name Field */}
                         <TextField
                             fullWidth
-                            label="Name"
+                            label={t('form.name')}
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             required
-                            sx={{ backgroundColor: 'background.paper' }}
+                            InputLabelProps={{
+                                sx: { textAlign: isRtl ? 'right' : 'left', width: '100%' }
+                            }}
+                            sx={{
+                                '& .MuiInputBase-root': {
+                                    direction: isRtl ? 'rtl' : 'ltr'
+                                }
+                            }}
                         />
 
                         {/* Email Field */}
                         <TextField
                             fullWidth
-                            label="Email"
+                            label={t('form.email')}
                             name="email"
                             type="email"
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            sx={{ backgroundColor: 'background.paper', borderRadius: 3 }}
+                            InputLabelProps={{
+                                sx: { textAlign: isRtl ? 'right' : 'left', width: '100%' }
+                            }}
+                            sx={{
+                                '& .MuiInputBase-root': {
+                                    direction: isRtl ? 'rtl' : 'ltr'
+                                }
+                            }}
                         />
 
                         {/* Phone Field */}
                         <TextField
                             fullWidth
-                            label="Phone Number"
+                            label={t('form.phone')}
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
                             required
-                            sx={{ backgroundColor: 'background.paper', borderRadius: 3 }}
+                            InputLabelProps={{
+                                sx: { textAlign: isRtl ? 'right' : 'left', width: '100%' }
+                            }}
+                            sx={{
+                                '& .MuiInputBase-root': {
+                                    direction: isRtl ? 'rtl' : 'ltr'
+                                }
+                            }}
                         />
 
                         {/* Inquiry Type Dropdown */}
                         <FormControl fullWidth required sx={{ backgroundColor: 'background.paper', borderRadius: 3 }}>
-                            <InputLabel id="inquiry-type-label">Inquiry Type</InputLabel>
+                            <InputLabel id="inquiry-type-label">{t('form.inquiryType')}</InputLabel>
                             <Select
                                 labelId="inquiry-type-label"
-                                label="Inquiry Type"
+                                label={t('form.inquiryType')}
                                 name="inquiryType"
                                 value={formData.inquiryType}
                                 onChange={handleChange}
                             >
-                                <MenuItem value="course">Course</MenuItem>
-                                <MenuItem value="mentoring">Mentoring</MenuItem>
-                                <MenuItem value="governance">Governance</MenuItem>
-                                <MenuItem value="support">Support</MenuItem>
+                                <MenuItem value="course">{t('course')}</MenuItem>
+                                <MenuItem value="mentoring">{t('mentoring')}</MenuItem>
+                                <MenuItem value="governance">{t('governance')}</MenuItem>
+                                <MenuItem value="support">{t('support')}</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -116,7 +175,7 @@ const HomeNewsLetter: FC = () => {
                         <TextareaAutosize
                             aria-label="Message"
                             minRows={5}
-                            placeholder="Enter your message"
+                            placeholder={t('form.messagePlaceholder')}
                             name="message"
                             value={formData.message}
                             onChange={handleChange}
@@ -129,16 +188,56 @@ const HomeNewsLetter: FC = () => {
                                 backgroundColor: '#fff',
                                 fontFamily: 'inherit',
                                 fontSize: '1rem',
+                                direction: isRtl ? 'rtl' : 'ltr',
+                                textAlign: isRtl ? 'right' : 'left',
                             }}
                         />
 
                         {/* Submit Button */}
-                        <StyledButton type="submit" disableHoverEffect size="large">
-                            Submit
+                        <StyledButton type="submit" disableHoverEffect size="large" color={'dark'}>
+                            {t('buttons.submit')}
                         </StyledButton>
                     </Box>
                 </Box>
             </Container>
+
+            {/* Success Dialog */}
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="success-dialog-title"
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogContent sx={{
+                    textAlign: 'center',
+                    py: 4,
+                    px: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 2
+                }}>
+                    <CheckCircleIcon sx={{ 
+                        fontSize: 80, 
+                        color: 'success.main',
+                        mb: 2
+                    }} />
+                    <Typography variant="h5" component="h2" gutterBottom>
+                        {t('successMessage')}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                        {t('successDescription')}
+                    </Typography>
+                    <StyledButton 
+                        onClick={handleCloseDialog}
+                        disableHoverEffect
+                        // sx={{ minWidth: 200 }}
+                    >
+                        {t('buttons.okay')}
+                    </StyledButton>
+                </DialogContent>
+            </Dialog>
         </Box>
     );
 };

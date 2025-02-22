@@ -2,8 +2,11 @@ import React, { FC } from 'react'
 import Box from '@mui/material/Box'
 import { Link as ScrollLink } from 'react-scroll'
 import { navigations } from './navigation.data'
+import { useTranslation } from 'next-i18next'
 
 const Navigation: FC = () => {
+  const { t } = useTranslation('common')
+
   return (
     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
       {navigations.map(({ path: destination, label }) => (
@@ -27,7 +30,7 @@ const Navigation: FC = () => {
             mb: { xs: 3, md: 0 },
             fontSize: { xs: '1.2rem', md: 'inherit' },
             ...(destination === '/' && {
-              color: 'primary.main',
+              color: '#283A5F',
             }),
 
             '& > div': { display: 'none' },
@@ -35,13 +38,14 @@ const Navigation: FC = () => {
             '&.current>div': { display: 'block' },
 
             '&:hover': {
-              color: 'primary.main',
+              color: '#283A5F',
               '&>div': {
                 display: 'block',
               },
             },
           }}
         >
+          {t(`menu.${label.toLowerCase()}`)}
           <Box
             sx={{
               position: 'absolute',
@@ -53,7 +57,6 @@ const Navigation: FC = () => {
             {/* eslint-disable-next-line */}
             <img src="/images/headline-curve.svg" alt="Headline curve" />
           </Box>
-          {label}
         </Box>
       ))}
     </Box>

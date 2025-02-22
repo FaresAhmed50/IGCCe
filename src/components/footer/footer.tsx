@@ -10,7 +10,7 @@ const Footer: FC = () => {
         <Box
             component="footer"
             sx={{
-                backgroundColor: 'primary.main', // Background color
+                backgroundColor: '#283A5F', // Background color
                 py: { xs: 6, md: 10 }, // Padding top and bottom
                 color: 'primary.contrastText', // Text color
                 borderTop: '2px solid', // Add a border at the top
